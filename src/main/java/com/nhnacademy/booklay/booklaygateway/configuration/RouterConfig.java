@@ -16,7 +16,7 @@ public class RouterConfig {
                 .route("get_something", r -> r.path("/coupon/**")
                         .uri("https://comsun.shop"))
                 .route("get_route", r -> r.path("/member/**")   // localhost:8080/member
-                        .uri("https://naver.com"))                      // naver.com/member
+                        .uri("https://naver.com"))                      // naver.com/member/
 
                 .build();
     }
