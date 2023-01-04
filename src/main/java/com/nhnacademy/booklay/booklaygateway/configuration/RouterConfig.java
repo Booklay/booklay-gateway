@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Configuration;
 public class RouterConfig {
 
     @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder){
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("get_something", r -> r.path("/coupon/**")
-                        .uri("https://comsun.shop"))
-                .route("get_route", r -> r.path("/member/**")   // localhost:8080/member
-                        .uri("https://naver.com"))                      // naver.com/member/
-
-                .build();
-        //
+            .route("get_something", r -> r.path("/test/**")
+                .uri("https://comsun.shop"))
+            .route("get_coupon", r -> r.path("/coupon/**")
+                .uri("http://133.186.228.19:8090"))
+            .route("get_shop", r -> r.path("/shop/**")
+                .uri("http://125.6.38.201:8090"))
+            .build();
     }
 }
