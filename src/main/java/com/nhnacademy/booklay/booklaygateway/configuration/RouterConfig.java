@@ -11,8 +11,6 @@ public class RouterConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("get_something", r -> r.path("/test/**")
-                .uri("https://comsun.shop"))
             .route("get_coupon", r -> r.path("/coupon/**")
                 .uri("http://133.186.228.19:8090"))
             .route("get_shop", r -> r.path("/shop/**")
