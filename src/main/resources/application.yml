@@ -1,6 +1,38 @@
-#spring:
-#  application:
-#    name: booklay-gateway
-#
-#  config:
-#    import: "optional:configserver:http://133.186.218.11:8888"
+spring:
+  application:
+    name: booklay-gateway
+
+  cloud:
+    gateway:
+      default-filters:
+        - HeaderFilter
+
+      routes:
+        - id: shop-service
+          uri: http://127.0.0.1:9090
+          predicates:
+            - Path=/shop/v1/**
+            - Method=GET, POST, PUT, DELETE, PATCH
+          filters:
+            - RewritePath=/shop/v1/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: coupon-service
+          uri: http://127.0.0.1:8090
+          predicates:
+            - Path=/coupon/v1/**
+            - Method=GET, POST, PUT, DELETE, PATCH
+          filters:
+            - RewritePath=/coupon/v1/(?<segment>.*), /$\{segment}
+
+        - id: auth-service
+          uri: http://127.0.0.1:5050
+          predicates:
+            - Path=/auth/v1/**
+            - Method=GET, POST, PUT, DELETE, PATCH
+          filters:
+            - RewritePath=/auth/v1/(?<segment>.*), /$\{segment}
+
+booklay:
+  jwt:
+    secret: cQfTjWmZq4t7w!z%C*F-JaNdRgUkXp2r5u8x/A?D(G+KbPeShVmYq3t6v9y$B&E)

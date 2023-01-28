@@ -1,5 +1,5 @@
-spring:
-  cloud:
-    config:
-      uri: http://133.186.218.11:8888
-      name: booklay-gateway
+#spring:
+#  cloud:
+#    config:
+#      uri: http://133.186.218.11:8888
+#      name: booklay-gateway
