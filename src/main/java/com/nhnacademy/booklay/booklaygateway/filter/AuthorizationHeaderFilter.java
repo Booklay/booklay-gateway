@@ -1,13 +1,15 @@
 package com.nhnacademy.booklay.booklaygateway.filter;
 
+import com.nhnacademy.booklay.booklaygateway.util.TokenUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -22,12 +24,17 @@ import javax.xml.bind.DatatypeConverter;
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
 
     private final Environment env;
+
+    //TODO: 이거지우기
     @Value("${booklay.jwt.secret}")
     private String secret;
+    private final TokenUtils tokenUtils;
 
-    public AuthorizationHeaderFilter(Environment env) {
+
+    public AuthorizationHeaderFilter(Environment env, TokenUtils tokenUtils) {
         super(Config.class);
         this.env = env;
+        this.tokenUtils = tokenUtils;
     }
 
     public static class Config {
@@ -41,15 +48,24 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             ServerHttpRequest request = exchange.getRequest();
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "No authorization header", HttpStatus.UNAUTHORIZED);
+                log.info("Authorization header is missing");
+
+                return chain.filter(exchange);
             }
 
-            String authorizationHeader = request.getHeaders().get(org.springframework.http.HttpHeaders.AUTHORIZATION).get(0);
+            String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace("Bearer", "");
 
             if (!isJwtValid(jwt)) {
                 return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
             }
+
+            String role = tokenUtils.getRole(jwt);
+
+            exchange.getRequest()
+                .mutate()
+                .header("WWW-Authenticate", role)
+                .build();
 
             return chain.filter(exchange);
         }));
@@ -71,6 +87,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
             role = String.valueOf(claims.get("role"));
             username = String.valueOf(claims.get("username"));
+
         } catch (Exception e) {
             returnVal = false;
         }

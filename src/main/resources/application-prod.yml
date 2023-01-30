@@ -24,9 +24,13 @@ spring:
           filters:
             - RewritePath=/coupon/v1/(?<segment>.*), /$\{segment}
 
-logging:
-  level:
-    root: debug
+        - id: auth-service
+          uri: http://133.186.159.206:5050
+          predicates:
+            - Path=/auth/v1/**
+            - Method=GET, POST, PUT, DELETE, PATCH
+          filters:
+            - RewritePath=/auth/v1/(?<segment>.*), /$\{segment}
 
 booklay:
   jwt:
