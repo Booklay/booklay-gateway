@@ -32,6 +32,21 @@ spring:
           filters:
             - RewritePath=/auth/v1/(?<segment>.*), /$\{segment}
 
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://133.186.250.128:6060"
+              - "http://booklay.shop"
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+
 booklay:
   jwt:
     secret: cQfTjWmZq4t7w!z%C*F-JaNdRgUkXp2r5u8x/A?D(G+KbPeShVmYq3t6v9y$B&E)

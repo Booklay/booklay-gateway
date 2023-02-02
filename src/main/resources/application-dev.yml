@@ -32,6 +32,21 @@ spring:
           filters:
             - RewritePath=/auth/v1/(?<segment>.*), /$\{segment}
 
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+            - "http://localhost:6060"
+            - "http://127.0.0.1:6060"
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+
 booklay:
   jwt:
     secret: cQfTjWmZq4t7w!z%C*F-JaNdRgUkXp2r5u8x/A?D(G+KbPeShVmYq3t6v9y$B&E)
