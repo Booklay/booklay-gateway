@@ -2,10 +2,7 @@ package com.nhnacademy.booklay.booklaygateway.filter;
 
 import com.nhnacademy.booklay.booklaygateway.util.TokenUtils;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
@@ -17,17 +14,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import javax.xml.bind.DatatypeConverter;
-
 @Component
 @Slf4j
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthorizationHeaderFilter.Config> {
 
     private final Environment env;
 
-    //TODO: 이거지우기
-    @Value("${booklay.jwt.secret}")
-    private String secret;
     private final TokenUtils tokenUtils;
 
 
@@ -76,17 +68,13 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         boolean returnVal = true;
 
         String role = null;
-        String username = null;
+        String email = null;
 
         try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(DatatypeConverter.parseBase64Binary(secret))
-                    .build()
-                    .parseClaimsJws(jwt)
-                    .getBody();
+            Claims claims = tokenUtils.getClaims(jwt);
 
             role = String.valueOf(claims.get("role"));
-            username = String.valueOf(claims.get("username"));
+            email = String.valueOf(claims.get("email"));
 
         } catch (Exception e) {
             returnVal = false;
@@ -96,7 +84,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             returnVal = false;
         }
 
-        log.info("Valid JWT Token username = {}, role = {}", username, role);
+        log.info("Valid JWT Token username = {}, role = {}", email, role);
 
         return returnVal;
 
