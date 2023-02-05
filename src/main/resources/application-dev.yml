@@ -15,6 +15,7 @@ spring:
             - Method=GET, POST, PUT, DELETE, PATCH
           filters:
             - RewritePath=/shop/v1/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 
         - id: coupon-service
           uri: http://127.0.0.1:8090

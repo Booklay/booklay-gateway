@@ -49,7 +49,8 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             String jwt = authorizationHeader.replace("Bearer", "");
 
             if (!isJwtValid(jwt)) {
-                return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
+                log.error("JWT token is not valid, uri  = {}", request.getURI());
+                return chain.filter(exchange);
             }
 
             String role = tokenUtils.getRole(jwt);
@@ -63,6 +64,13 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         }));
     }
 
+    /**
+     * JWT가 유효한지 검사한다.
+     * 시간이 만료되었을 경우 Parser에 의해 ExpiredJwtException이 발생한다.
+     *
+     * @param jwt 헤더에 있는 jwt
+     * @return 유효할 경우 true, 아니면 false
+     */
     private boolean isJwtValid(String jwt) {
 
         boolean returnVal = true;
