@@ -47,3 +47,12 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script_stop: true
           script: "./startup.sh"
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance-id:${random.value}}
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://133.186.215.146:3939/eureka
